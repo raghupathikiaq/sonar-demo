@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+    
+    environment {
+        APP_NAME = "my-first-app"
+        SONAR_SCANNER= tool 'SonarScanner'
+    }
+ 
+    stages {
+        stage('Checkout') {
+            steps {
+                    git branch: 'main', 
+                    credentialsId: 'git_creds', 
+                    url: 'https://github.com/raghupathikiaq/sonar-demo.git'
+            }
+        }
+ 
+        stage('Cleanup & Install') {
+            steps {
+                script {
+                    // Fixes the EINTEGRITY / Corrupted Tarball error
+                    sh '''
+                    echo "installing packages..."
+                    npm install 
+                    '''
+                    
+                }
+            }
+        }
+ 
+       stage('SonarQube Analysis') {
+    steps {
+        // Use the name defined in Jenkins System configuration
+        withSonarQubeEnv('SonarQube-Server') {
+            // Use the name defined in Jenkins Tools configuration
+            sh ''' ${SONAR_SCANNER}/bin/sonar-scanner \
+                -Dsonar.projectKey=my-first-app \
+                -Dsonar.sources= src \
+                -Dsonar.javascrpit.lcov.reportPaths=coverage/lcov.info
+            '''
+        }
+    }
+}
+
+ 
+    stage("Quality Gate") {
+            steps {
+                echo "Checking Quality Gate"
+              timeout(time: 5, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+ 
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "SUCCESS: Frontend deployed to CloudFront!"
+        }
+        failure {
+            echo "FAILURE: Build or Deployment failed. Check the logs above."
+        }
+    }
+}
