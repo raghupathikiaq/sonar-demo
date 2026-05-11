@@ -36,7 +36,7 @@ pipeline {
             sh ''' ${SONAR_SCANNER}/bin/sonar-scanner \
                 -Dsonar.projectKey=my-first-app \
                 -Dsonar.sources= src \
-                -Dsonar.javascrpit.lcov.reportPaths=coverage/lcov.info
+                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             '''
         }
     }
@@ -56,10 +56,10 @@ pipeline {
     
     post {
         success {
-            echo "SUCCESS: Frontend deployed to CloudFront!"
+            echo "SUCCESS: code anaysis checked successfully"
         }
         failure {
-            echo "FAILURE: Build or Deployment failed. Check the logs above."
+            echo "FAILURE:  failed. Check the logs above."
         }
     }
 }
