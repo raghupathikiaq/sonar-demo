@@ -1,65 +1,82 @@
 pipeline {
     agent any
-    
-    environment {
-        APP_NAME = "my-first-app"
-        SONAR_SCANNER= tool 'SonarScanner'
+
+    tools {
+        nodejs 'NodeJS'          // Must match the name in Jenkins → Tools → NodeJS
     }
- 
+
+    environment {
+        APP_NAME  = "my-first-app"
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
-                    git branch: 'main', 
-                    credentialsId: 'git_creds', 
-                    url: 'https://github.com/raghupathikiaq/sonar-demo.git'
+                git branch:        'Raghupathi',
+                    credentialsId: 'git_creds',
+                    url:           'https://github.com/Locate360/Locate360-User-panel_dev.git'
             }
         }
- 
+
         stage('Cleanup & Install') {
             steps {
                 script {
-                    // Fixes the EINTEGRITY / Corrupted Tarball error
                     sh '''
-                    echo "installing packages..."
-                    npm install 
-                    '''
-                    
-                }
-            }
-        }
- 
-       stage('SonarQube Analysis') {
-    steps {
-        // Use the name defined in Jenkins System configuration
-        withSonarQubeEnv('SonarQube-Server') {
-            // Use the name defined in Jenkins Tools configuration
-            sh ''' ${SONAR_SCANNER}/bin/sonar-scanner \
-                -Dsonar.projectKey=my-first-app \
-                -Dsonar.sources= src \
-                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            '''
-        }
-    }
-}
+                        echo "Cleaning npm cache to avoid EINTEGRITY / corrupted tarball errors..."
+                        npm cache clean --force
 
- 
-    stage("Quality Gate") {
+                        echo "Removing existing node_modules and lock file..."
+                        rm -rf node_modules package-lock.json
+
+                        echo "Installing packages..."
+                        npm install
+                    '''
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
             steps {
-                echo "Checking Quality Gate"
-              timeout(time: 5, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true
- 
+                script {
+                    def scannerHome = tool 'SonarScanner'   // Must match Jenkins → Tools → SonarScanner
+                    echo "Scanner path: ${scannerHome}"
+
+                    withSonarQubeEnv('SonarQube') {         // Must match Jenkins → System → SonarQube servers
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=${APP_NAME} \
+                                -Dsonar.sources=src \
+                                -Dsonar.projectName=${APP_NAME}
+                        """
+                        // NOTE: -Dsonar.host.url and -Dsonar.login are injected
+                        // automatically by withSonarQubeEnv — do NOT hard-code them here.
+                    }
+                }
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        stage('Quality Gate') {
+        // ─────────────────────────────────────────────
+            steps {
+                echo "Waiting for SonarQube Quality Gate result..."
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
     }
-    
+
     post {
         success {
-            echo "SUCCESS: code anaysis checked successfully"
+            echo "SUCCESS: Code passed all checks."
         }
         failure {
-            echo "FAILURE:  failed. Check the logs above."
+            echo "FAILURE: Pipeline failed. Check the logs above."
+        }
+        always {
+            cleanWs()   // Optional: wipe workspace after every run to keep the agent clean
         }
     }
 }
