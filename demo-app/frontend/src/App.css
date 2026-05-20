@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;600;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #080C10;
+  --surface: #0D1117;
+  --border:  #1C2733;
+  --accent:  #00E5FF;
+  --green:   #39D353;
+  --yellow:  #F9C74F;
+  --blue:    #4D9DE0;
+  --text:    #CDD9E5;
+  --muted:   #4A5568;
+  --mono:    'Share Tech Mono', monospace;
+  --sans:    'Barlow', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.logo {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 20px var(--accent);
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--green);
+  background: #0D2B1A;
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  padding: 4px 10px;
+  letter-spacing: 0.12em;
+}
+
+/* ── Main ── */
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Hero ── */
+.hero { padding: 20px 0 10px; }
+.hero-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(36px, 8vw, 56px);
+  line-height: 1.05;
+  color: #E6EDF3;
+  letter-spacing: -0.02em;
+}
+.accent { color: var(--accent); text-shadow: 0 0 30px var(--accent)60; }
+.hero-sub {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  margin-top: 14px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  animation: fadeUp 0.4s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-header {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+/* Status dots */
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot.green  { background: var(--green);  box-shadow: 0 0 8px var(--green); }
+.dot.yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+.dot.blue   { background: var(--blue);   box-shadow: 0 0 8px var(--blue); }
+
+/* ── Info Grid ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.info-item { display: flex; flex-direction: column; gap: 4px; }
+.info-item.full { grid-column: 1 / -1; }
+.info-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+}
+.info-value {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text);
+}
+.info-value.accent { color: var(--accent); text-shadow: 0 0 12px var(--accent)60; }
+.info-value.small  { font-size: 11px; }
+
+/* ── Status ── */
+.status-row {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-row.error { color: #F87171; }
+.spinner {
+  width: 10px; height: 10px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Progress ── */
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  border-radius: 2px;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 10px var(--accent)80;
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+/* ── Todo List ── */
+.todo-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.todo-item {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.todo-item.done {
+  color: var(--green);
+  border-color: #0D2B1A;
+  background: #0A1F12;
+}
+.todo-icon {
+  font-size: 11px;
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ── Architecture ── */
+.arch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.arch-box {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-align: center;
+}
+.arch-box.control {
+  background: #0D1B2E;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+}
+.arch-box.worker {
+  background: #0D2B1A;
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 14px 24px;
+  width: 100%;
+  max-width: 320px;
+}
+.arch-line {
+  font-family: var(--mono);
+  color: var(--muted);
+  font-size: 16px;
+}
+.arch-row { width: 100%; display: flex; justify-content: center; }
+.arch-pods {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+.pod {
+  font-size: 10px;
+  background: #051A0A;
+  border: 1px solid #1C4A2A;
+  color: #39D353;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  letter-spacing: 0.1em;
+}
